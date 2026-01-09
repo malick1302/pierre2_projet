@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* Définition des polices Helvetica Neue */
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/font/Helvetica_Neue/HelveticaNeue-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/font/Helvetica_Neue/HelveticaNeue-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/font/Helvetica_Neue/HelveticaNeue-Roman.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/font/Helvetica_Neue/HelveticaNeue-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/font/Helvetica_Neue/HelveticaNeue-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Configuration Tailwind pour les polices personnalisées */
+@theme {
+  --color-custom-grey: #D1D1D1;
+  --font-family-helvetica-neue: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  --font-family-helvetica_neue: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+}
+
+/* Variable CSS pour utilisation directe si nécessaire */
+:root {
+  --custom-grey: #D1D1D1;
+}
+
+/* Utilitaires personnalisés pour les scrollbars */
+layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Couleur personnalisée */
+  .text-custom-grey {
+    color: #D1D1D1;
+  }
+
+  /* Police Helvetica Neue */
+  .font-HelveticaNeue,
+  .font-Helvetica_Neue {
+    font-family: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Reset minimal pour une meilleure responsivité */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Empêche le scroll vertical et horizontal */
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+
+  /* Marges de 18px sur mobile */
+  overflow: hidden;
+  /* Empêche le scroll à l'intérieur */
+}
+
+/* Marges de 28px sur desktop (à partir de 768px) */
+@media (min-width: 768px) {
+  #root {
+    /* Styles desktop si nécessaire */
+  }
+}
