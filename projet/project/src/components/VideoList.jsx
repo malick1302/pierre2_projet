@@ -68,63 +68,46 @@ export default function VideoList() {
       // Calculer la hauteur de la vidéo de manière progressive
       // Sur les très grands écrans, augmenter progressivement
       let videoHeight;
+      let carouselSpacing;
+      
       if (isMobile) {
         videoHeight = 154 * scaleRatio;
+        carouselSpacing = refValues.videoSpacing; // Fixe pour mobile
       } else {
-        // Pour desktop/tablet : croissance progressive basée sur la largeur d'écran
-        const baseVideoHeight = refValues.videoHeight * scaleRatio;
-        // Sur les écrans plus grands que 1440px, ajouter un bonus proportionnel réduit
-        const extraScale = screenWidth > BASE_WIDTH_DESKTOP
-          ? 1 + ((screenWidth - BASE_WIDTH_DESKTOP) / BASE_WIDTH_DESKTOP) * 0.2 // 20% d'augmentation max (réduit)
-          : 1;
-        videoHeight = baseVideoHeight * extraScale;
+        // Pour desktop : fixer les marges et adapter la vidéo pour remplir l'espace sans espace blanc
+        const navbarHeight = 12 + 60; // margin-top + hauteur navbar approximative
+        const carouselWithTitle = 250; // Hauteur approximative du carrousel avec titres (image + titre)
+        const bottomMarginFixed = refValues.bottomMargin; // Marge en bas fixe (28px)
+        const baseCarouselSpacing = refValues.videoSpacing; // Espacement fixe entre vidéo et carrousel (25px)
 
-        // Bonus pour les écrans entre 768px et 1200px pour réduire l'espace blanc en bas
-        if (screenWidth >= 768 && screenWidth <= 1200) {
-          // Calculer un facteur de bonus progressif
-          // Maximum au centre (984px) = +15% de bonus
-          const centerPoint = 984; // Centre entre 768 et 1200
-          const distanceFromCenter = Math.abs(screenWidth - centerPoint);
-          const maxDistance = 216; // Distance max du centre (1200 - 984 ou 984 - 768)
-          const bonusFactor = 1 - (distanceFromCenter / maxDistance); // 1 au centre, 0 aux extrémités
-          const maxBonus = 1.15; // +15% maximum
-          const bonusScale = 1 + (bonusFactor * (maxBonus - 1));
-          videoHeight = videoHeight * bonusScale;
+        // Calculer l'espace disponible pour la vidéo
+        // Hauteur totale utilisée = navbar + navbarSpacing + carouselSpacing + carousel + bottomMargin
+        const fixedHeight = navbarHeight + refValues.navbarSpacing + baseCarouselSpacing + carouselWithTitle + bottomMarginFixed;
+        const availableHeightForVideo = screenHeight - fixedHeight;
+
+        // La vidéo doit remplir exactement l'espace disponible pour éviter tout espace blanc
+        // Utiliser au minimum la hauteur de référence, sinon remplir tout l'espace disponible
+        const minVideoHeight = refValues.videoHeight;
+        videoHeight = Math.max(availableHeightForVideo, minVideoHeight);
+        
+        // Si l'espace disponible est supérieur à la hauteur minimale, utiliser tout l'espace
+        // pour éviter l'espace blanc en dessous du carrousel
+        if (availableHeightForVideo > minVideoHeight) {
+          videoHeight = availableHeightForVideo;
         }
-      }
-
-      // Calculer l'espacement dynamique entre la vidéo et le carrousel
-      // Hauteur totale disponible = 100vh - navbar (mt + hauteur) - vidéo - carrousel avec titres - marge bas fixe
-      const navbarHeight = isMobile ? 18 + 60 : 12 + 60; // margin-top + hauteur navbar approximative
-      const carouselWithTitle = 250; // Hauteur approximative du carrousel avec titres (image + titre)
-      const bottomMarginFixed = refValues.bottomMargin || (isMobile ? 18 : 28); // Marge en bas fixe
-
-      // Calculer l'espace disponible pour l'espacement entre vidéo et carrousel
-      const totalUsedHeight = navbarHeight + refValues.navbarSpacing + videoHeight + carouselWithTitle + bottomMarginFixed;
-      const availableSpaceForCarouselSpacing = screenHeight - totalUsedHeight;
-
-      // L'espacement entre vidéo et carrousel s'adapte pour que tout tienne dans 100vh
-      // Minimum = espacement de base, mais peut augmenter si nécessaire
-      const baseCarouselSpacing = refValues.videoSpacing; // Espacement de base
-      let carouselSpacing;
-
-      if (availableSpaceForCarouselSpacing > baseCarouselSpacing) {
-        // Si on a de l'espace supplémentaire, utiliser l'espacement de base
+        
+        // L'espacement entre vidéo et carrousel reste fixe (25px)
         carouselSpacing = baseCarouselSpacing;
-      } else if (availableSpaceForCarouselSpacing > 0) {
-        // Sinon, utiliser l'espace disponible (minimum 10px)
-        carouselSpacing = Math.max(availableSpaceForCarouselSpacing, 10);
-      } else {
-        // Si le contenu dépasse, utiliser l'espacement minimum
-        carouselSpacing = 10;
       }
+
+      const bottomMarginFixed = refValues.bottomMargin || (isMobile ? 18 : 28); // Marge en bas fixe
 
       const newSpacing = {
         navbarSpacing: refValues.navbarSpacing, // Fixe - ne change pas avec l'écran
         videoSpacing: refValues.videoSpacing, // Fixe - ne change pas avec l'écran
-        carouselSpacing: carouselSpacing, // Variable - s'adapte pour que tout tienne dans 100vh
+        carouselSpacing: carouselSpacing, // Fixe pour desktop, variable pour mobile
         horizontalMargin: refValues.horizontalMargin, // Fixe - ne change pas avec l'écran
-        videoHeight: videoHeight, // Proportionnel
+        videoHeight: videoHeight, // Adaptatif pour remplir l'espace disponible
         bottomMargin: bottomMarginFixed // Fixe - marge en bas constante (18px mobile, 28px desktop)
       };
 
