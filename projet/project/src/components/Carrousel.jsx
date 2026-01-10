@@ -392,7 +392,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
                                 }}
                             />
                             <div
-                                className="text-center font-HelveticaNeue font-light whitespace-nowrap pt-2"
+                                className="text-center font-HelveticaNeue font-light whitespace-nowrap pt-2 text-grey-darker"
                                 style={{
                                     opacity: 1,
                                     marginTop: isMobile ? "11px" : "8px",

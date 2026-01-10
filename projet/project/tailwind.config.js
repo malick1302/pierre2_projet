@@ -21,6 +21,8 @@ export default {
       colors: {
         'custom-grey': '#D1D1D1',
         'greyh': '#D1D1D1',
+        'grey-dark': '#494949',
+        'grey-darker': '#272727',
         'roar-blue': '#3137FD',
         'roar-light': '#F8F8F8',
         'backGrey': '#F6F6F6',

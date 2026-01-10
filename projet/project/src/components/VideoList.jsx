@@ -69,7 +69,7 @@ export default function VideoList() {
       // Sur les très grands écrans, augmenter progressivement
       let videoHeight;
       let carouselSpacing;
-      
+
       if (isMobile) {
         videoHeight = 154 * scaleRatio;
         carouselSpacing = refValues.videoSpacing; // Fixe pour mobile
@@ -89,13 +89,13 @@ export default function VideoList() {
         // Utiliser au minimum la hauteur de référence, sinon remplir tout l'espace disponible
         const minVideoHeight = refValues.videoHeight;
         videoHeight = Math.max(availableHeightForVideo, minVideoHeight);
-        
+
         // Si l'espace disponible est supérieur à la hauteur minimale, utiliser tout l'espace
         // pour éviter l'espace blanc en dessous du carrousel
         if (availableHeightForVideo > minVideoHeight) {
           videoHeight = availableHeightForVideo;
         }
-        
+
         // L'espacement entre vidéo et carrousel reste fixe (25px)
         carouselSpacing = baseCarouselSpacing;
       }
@@ -647,7 +647,7 @@ export default function VideoList() {
                           bottom: '0',
                           left: '0',
                           right: '0',
-                          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                        
                           transition: 'opacity 0.3s ease-in-out',
                           zIndex: 15,
                           pointerEvents: 'auto'
@@ -658,7 +658,7 @@ export default function VideoList() {
                       >
                         {/* Barre de progression */}
                         <div
-                          className="relative flex-1 h-1 bg-gray-600 cursor-pointer rounded-full overflow-hidden"
+                          className="relative flex-1 h-[1px] bg-gray-600 cursor-pointer rounded-full overflow-hidden"
                           onClick={async (e) => {
                             e.stopPropagation();
                             if (playerRef.current) {
@@ -711,14 +711,14 @@ export default function VideoList() {
                             <img
                               src="/images/soundoff.png"
                               alt="Son coupé"
-                              className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
+                              className="w-[10px] h-[10px] md:w-[15px] md:h-[15px]"
                               style={{ display: 'block' }}
                             />
                           ) : (
                             <img
                               src="/images/soundon.png"
                               alt="Son activé"
-                              className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
+                              className="w-[10px] h-[10px] md:w-[15px] md:h-[15px]"
                               style={{ display: 'block' }}
                             />
                           )}
@@ -801,7 +801,7 @@ export default function VideoList() {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[1.125rem] md:mt-[1.125rem] flex-shrink-0" style={{ boxSizing: 'border-box' }}>
+            <div className="w-full md:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[1.125rem] md:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
               <h3 className="text-2xl md:text-[1.25rem] font-[500] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.title}
               </h3>
@@ -950,7 +950,7 @@ export default function VideoList() {
           >
             {/* Barre de progression */}
             <div
-              className="relative flex-1 h-1 bg-gray-600 cursor-pointer rounded-full overflow-hidden"
+              className="relative flex-1 h-1 bg-grey-600 cursor-pointer rounded-full overflow-hidden"
               onClick={async (e) => {
                 e.stopPropagation();
                 if (playerRef.current) {
