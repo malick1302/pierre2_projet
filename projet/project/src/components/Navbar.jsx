@@ -5,6 +5,7 @@ export default function Navbar() {
             <h1
                 onClick={() => window.location.href = "/Projects"}
                 className="font-HelveticaNeue font-[500] text-[16px] md:text-[32px] cursor-pointer"
+                style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}
             >
                 {/* ✅ ROAR en Medium */}
                 <span className="text-[30px] md:text-[50px] font-medium">ROAR </span>
@@ -18,6 +19,7 @@ export default function Navbar() {
             <h2
                 onClick={() => window.location.href = "/About"}
                 className="font-HelveticaNeue font-medium text-[30px] md:text-[50px] cursor-pointer"
+                style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}
             >
                 Info
             </h2>

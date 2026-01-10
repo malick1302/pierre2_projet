@@ -37,7 +37,6 @@ const VideoPlayer = ({ onVideoLoad, videoRef }) => {
         }}
         frameBorder="0"
         allow="autoplay; fullscreen; picture-in-picture"
-        allowFullScreen
         title="Vidéo d'accueil"
       />
     </div>

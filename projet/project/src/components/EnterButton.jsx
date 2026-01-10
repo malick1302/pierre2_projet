@@ -24,8 +24,9 @@ const EnterButton = ({ show }) => {
     <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
       <button
         ref={enterButtonRef}
-        className="font-Helvetica_Neue font-[400] text-[16px] md:text-[38px] text-custom-grey cursor-pointer"
-        onClick={() => (window.location.href = '/Home')}
+        className="font-HelveticaNeue font-[400] text-[16px] md:text-[38px] text-custom-grey cursor-pointer"
+        style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}
+        onClick={() => (window.location.href = '/Projects')}
       >
         Enter
       </button>

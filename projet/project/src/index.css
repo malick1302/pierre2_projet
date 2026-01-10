@@ -1,56 +1,64 @@
-@import "tailwindcss";
-
-/* Définition des polices Helvetica Neue */
+/* IMPORTANT: Les @font-face doivent être AVANT @import "tailwindcss" */
+/* Définition des polices Helvetica Neue - Utiliser 'HelveticaNeue' comme nom (sans espace) */
 @font-face {
-  font-family: 'Helvetica Neue';
+  font-family: 'HelveticaNeue';
   src: url('/font/Helvetica_Neue/HelveticaNeue-Thin.otf') format('opentype');
   font-weight: 100;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-10FFFF;
 }
 
 @font-face {
-  font-family: 'Helvetica Neue';
+  font-family: 'HelveticaNeue';
   src: url('/font/Helvetica_Neue/HelveticaNeue-Light.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-10FFFF;
 }
 
 @font-face {
-  font-family: 'Helvetica Neue';
+  font-family: 'HelveticaNeue';
   src: url('/font/Helvetica_Neue/HelveticaNeue-Roman.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-10FFFF;
 }
 
 @font-face {
-  font-family: 'Helvetica Neue';
+  font-family: 'HelveticaNeue';
   src: url('/font/Helvetica_Neue/HelveticaNeue-Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-10FFFF;
 }
 
 @font-face {
-  font-family: 'Helvetica Neue';
+  font-family: 'HelveticaNeue';
   src: url('/font/Helvetica_Neue/HelveticaNeue-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-10FFFF;
 }
+
+@import "tailwindcss";
+
 
 /* Configuration Tailwind pour les polices personnalisées */
 @theme {
   --color-custom-grey: #D1D1D1;
-  --font-family-helvetica-neue: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
-  --font-family-helvetica_neue: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  --font-family-helvetica-neue: 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
+  --font-family-helvetica_neue: 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
 }
 
 /* Variable CSS pour utilisation directe si nécessaire */
 :root {
   --custom-grey: #D1D1D1;
+  --font-helvetica-neue: 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
 }
 
 /* Utilitaires personnalisés pour les scrollbars */
@@ -69,10 +77,14 @@ layer utilities {
     color: #D1D1D1;
   }
 
-  /* Police Helvetica Neue */
+  /* Police Helvetica Neue - Utiliser 'HelveticaNeue' (sans espace) */
   .font-HelveticaNeue,
   .font-Helvetica_Neue {
-    font-family: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+    font-family: 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
+    font-feature-settings: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 
