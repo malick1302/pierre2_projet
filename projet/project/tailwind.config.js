@@ -21,6 +21,12 @@ export default {
       colors: {
         'custom-grey': '#D1D1D1',
         'greyh': '#D1D1D1',
+        'roar-blue': '#3137FD',
+        'roar-light': '#F8F8F8',
+        'backGrey': '#F6F6F6',
+        'roar-dark': '#3137FD',
+        'roar-accent': '#7C7C7C',
+        'roar-bg': '#E0E0E0',
       },
     },
   },
