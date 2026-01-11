@@ -96,7 +96,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
             // La hauteur reste proportionnelle à la largeur, mais augmentée pour mobile
             const aspectRatio = BASE_CARD_HEIGHT / BASE_CARD_WIDTH;
             let finalCardHeight = finalCardWidth * aspectRatio;
-            
+
             // Augmenter la hauteur pour mobile (images plus hautes)
             if (mobile) {
                 finalCardHeight = finalCardHeight * 1.2; // +20% de hauteur pour mobile
@@ -266,7 +266,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
         if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
 
         const delta = e.touches[0].clientX - lastTouchX.current;
-        targetSpeed.current = -delta * 1.2;
+        // Vitesse augmentée pour mobile (2.5x au lieu de 1.2x)
+        targetSpeed.current = -delta * 2.5;
         lastTouchX.current = e.touches[0].clientX;
     };
 

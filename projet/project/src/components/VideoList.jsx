@@ -34,6 +34,7 @@ export default function VideoList() {
   const [showControls, setShowControls] = useState(false); // État pour afficher/masquer les contrôles au clic
   const [isHovering, setIsHovering] = useState(false); // État pour détecter le hover
   const [isMuted, setIsMuted] = useState(false); // État pour le son
+  const [fullscreenVideoDimensions, setFullscreenVideoDimensions] = useState({ width: '100vw', height: '100vh' }); // Dimensions pour letterboxing en plein écran
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const containerRef = useRef(null);
@@ -298,6 +299,27 @@ export default function VideoList() {
           await container.msRequestFullscreen();
         }
         setIsFullscreen(true);
+        // Calculer les dimensions pour letterboxing
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const aspectRatio = 16 / 9;
+        
+        let iframeWidth, iframeHeight;
+        
+        // Si l'écran est plus large que le ratio 16:9, on limite par la hauteur
+        if (screenWidth / screenHeight > aspectRatio) {
+          iframeHeight = screenHeight;
+          iframeWidth = screenHeight * aspectRatio;
+        } else {
+          // Sinon, on limite par la largeur
+          iframeWidth = screenWidth;
+          iframeHeight = screenWidth / aspectRatio;
+        }
+        
+        setFullscreenVideoDimensions({
+          width: `${iframeWidth}px`,
+          height: `${iframeHeight}px`
+        });
       }
     } catch (err) {
       console.error("Error toggling fullscreen:", err);
@@ -321,6 +343,27 @@ export default function VideoList() {
       if (isCurrentlyFullscreen && isOurContainer) {
         setShowControls(true);
         setIsHovering(true);
+        // Calculer les dimensions pour letterboxing
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const aspectRatio = 16 / 9;
+        
+        let iframeWidth, iframeHeight;
+        
+        // Si l'écran est plus large que le ratio 16:9, on limite par la hauteur
+        if (screenWidth / screenHeight > aspectRatio) {
+          iframeHeight = screenHeight;
+          iframeWidth = screenHeight * aspectRatio;
+        } else {
+          // Sinon, on limite par la largeur
+          iframeWidth = screenWidth;
+          iframeHeight = screenWidth / aspectRatio;
+        }
+        
+        setFullscreenVideoDimensions({
+          width: `${iframeWidth}px`,
+          height: `${iframeHeight}px`
+        });
       }
     };
 
@@ -601,7 +644,10 @@ export default function VideoList() {
                       maxWidth: isFullscreen ? '100vw' : (spacing.isMobile ? '100%' : `${(spacing.videoHeight * 16) / 9}px`),
                       boxSizing: 'border-box',
                       position: 'relative', // Position relative pour les boutons absolus à l'intérieur
-                      backgroundColor: isFullscreen ? '#000' : 'transparent'
+                      backgroundColor: isFullscreen ? '#000' : 'transparent',
+                      display: isFullscreen ? 'flex' : 'block',
+                      alignItems: isFullscreen ? 'center' : 'flex-start',
+                      justifyContent: isFullscreen ? 'center' : 'flex-start'
                     }}
                     onClick={handleVideoClick}
                     onMouseEnter={handleVideoMouseEnter}
@@ -627,12 +673,14 @@ export default function VideoList() {
                       ref={videoRef}
                       key={selectedVideo.id}
                       src={`${selectedVideo.url}?autoplay=0&loop=1&muted=0&controls=0`}
-                      className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                      className={isFullscreen ? "pointer-events-none" : "absolute top-0 left-0 w-full h-full pointer-events-none"}
                       style={{
                         zIndex: 1, // Z-index bas pour que la navbar passe au-dessus
-                        width: isFullscreen ? '100vw' : '100%',
-                        height: isFullscreen ? '100vh' : '100%',
-                        objectFit: 'cover'
+                        width: isFullscreen ? fullscreenVideoDimensions.width : '100%',
+                        height: isFullscreen ? fullscreenVideoDimensions.height : '100%',
+                        objectFit: isFullscreen ? 'contain' : 'cover',
+                        maxWidth: isFullscreen ? '100vw' : 'none',
+                        maxHeight: isFullscreen ? '100vh' : 'none'
                       }}
                       frameBorder="0"
                       allow="autoplay; picture-in-picture"
