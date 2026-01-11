@@ -80,29 +80,60 @@ export default function VideoList({ onFullscreenChange }) {
       // Sur les très grands écrans, augmenter progressivement
       let videoHeight;
       let carouselSpacing;
+      let bottomMarginFixed;
 
       if (isMobile) {
         // Augmenter la hauteur de la vidéo en mobile pour qu'elle soit plus grande
         videoHeight = 220 * scaleRatio; // Augmenté de 154 à 180
         carouselSpacing = refValues.videoSpacing; // Fixe pour mobile
+        bottomMarginFixed = refValues.bottomMargin; // Fixe pour mobile (18px)
       } else {
-        // Pour desktop : fixer les marges et adapter la vidéo pour remplir l'espace sans espace blanc
+        // Pour desktop : adapter les espacements pour que tout tienne dans 100vh
         const navbarHeight = 12 + 60; // margin-top + hauteur navbar approximative
         const carouselWithTitle = 250; // Hauteur approximative du carrousel avec titres (image + titre)
-        const bottomMarginFixed = refValues.bottomMargin; // Marge en bas fixe (28px)
-        const baseCarouselSpacing = refValues.videoSpacing; // Espacement fixe entre vidéo et carrousel (25px)
-
-        // Gérer l'espacement selon le type de tablette
+        const baseBottomMargin = refValues.bottomMargin; // Marge de base (28px desktop, 18px mobile)
+        const baseCarouselSpacing = refValues.videoSpacing; // Espacement de base (25px desktop, 80px mobile)
+        
+        // Calculer l'espace vertical disponible après la navbar
+        const spaceAfterNavbar = screenHeight - navbarHeight - refValues.navbarSpacing;
+        
+        // Valeurs minimales pour éviter que les éléments soient trop serrés
+        const minBottomMargin = 10;
+        const minCarouselSpacing = isTablet ? 0 : 15;
+        
+        // Calculer l'espace nécessaire pour le carrousel et les marges
+        const totalFixedHeight = carouselWithTitle + minBottomMargin + minCarouselSpacing;
+        const availableSpaceForMarges = Math.max(0, spaceAfterNavbar - totalFixedHeight);
+        
+        // Répartir l'espace disponible proportionnellement, en privilégiant légèrement le carouselSpacing
+        let adaptiveBottomMargin = minBottomMargin;
+        let adaptiveCarouselSpacing = minCarouselSpacing;
+        
         if (isTabletLarge) {
-          // En tablette large (7 images) : réduire l'espacement de 18px pour réduire la marge blanche en bas
-          carouselSpacing = Math.max(0, baseCarouselSpacing - 18);
+          // En tablette large (7 images) : réduire les marges pour libérer de l'espace
+          adaptiveCarouselSpacing = Math.max(minCarouselSpacing, baseCarouselSpacing - 18);
+          adaptiveBottomMargin = Math.max(minBottomMargin, baseBottomMargin - 18);
         } else if (isTablet) {
-          // En tablette normale (5 images) : réduire l'espacement de 18px (était 0, donc reste à 0)
-          carouselSpacing = 0;
+          // En tablette normale (5 images) : pas d'espacement vidéo-carrousel, réduire la marge en bas
+          adaptiveCarouselSpacing = 0;
+          adaptiveBottomMargin = Math.max(minBottomMargin, baseBottomMargin - 18);
         } else {
-          // L'espacement entre vidéo et carrousel reste fixe (25px) pour desktop
-          carouselSpacing = baseCarouselSpacing;
+          // Desktop : utiliser les valeurs de base mais adapter si nécessaire
+          adaptiveCarouselSpacing = baseCarouselSpacing;
+          adaptiveBottomMargin = baseBottomMargin;
         }
+        
+        // Si l'espace disponible est insuffisant, réduire les marges de manière adaptative
+        const requiredHeight = carouselWithTitle + adaptiveCarouselSpacing + adaptiveBottomMargin;
+        if (requiredHeight > spaceAfterNavbar) {
+          // Calculer le ratio de réduction nécessaire
+          const reductionRatio = spaceAfterNavbar / requiredHeight;
+          adaptiveCarouselSpacing = Math.max(minCarouselSpacing, adaptiveCarouselSpacing * reductionRatio);
+          adaptiveBottomMargin = Math.max(minBottomMargin, adaptiveBottomMargin * reductionRatio);
+        }
+        
+        carouselSpacing = adaptiveCarouselSpacing;
+        bottomMarginFixed = adaptiveBottomMargin;
 
         if ((isTablet && !isTabletLarge) || isTabletLarge) {
           // En tablette normale (5 images) et tablette large (7 images) : réduire la hauteur de la vidéo pour libérer de l'espace
@@ -135,9 +166,6 @@ export default function VideoList({ onFullscreenChange }) {
           }
         }
       }
-
-      // Réduire la marge en bas de 18px pour les versions tablette (5 et 7 images) pour réduire la marge blanche
-      const bottomMarginFixed = (isTablet && !isMobile) ? Math.max(0, (refValues.bottomMargin || 28) - 18) : (refValues.bottomMargin || (isMobile ? 18 : 28));
 
       // Taille de l'icône open responsive (proportionnelle)
       const openIconBaseWidth = 20; // Taille de base sur desktop
