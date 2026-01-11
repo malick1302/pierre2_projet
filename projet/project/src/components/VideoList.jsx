@@ -154,16 +154,10 @@ export default function VideoList({ onFullscreenChange }) {
           const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
           const availableHeightForVideo = screenHeight - fixedHeight;
 
-          // La vidéo doit remplir exactement l'espace disponible pour éviter tout espace blanc
-          // Utiliser au minimum la hauteur de référence, sinon remplir tout l'espace disponible
-          const minVideoHeight = refValues.videoHeight;
-          videoHeight = Math.max(availableHeightForVideo, minVideoHeight);
-
-          // Si l'espace disponible est supérieur à la hauteur minimale, utiliser tout l'espace
-          // pour éviter l'espace blanc en dessous du carrousel
-          if (availableHeightForVideo > minVideoHeight) {
-            videoHeight = availableHeightForVideo;
-          }
+          // La vidéo doit s'adapter à l'espace disponible sans dépasser
+          // Pour que le carrousel reste toujours visible, la vidéo ne doit jamais dépasser l'espace disponible
+          // Utiliser directement l'espace disponible (la vidéo sera plus petite si nécessaire)
+          videoHeight = availableHeightForVideo;
         }
       }
 
