@@ -24,7 +24,7 @@ const REFERENCE_VALUES = {
   }
 };
 
-export default function VideoList() {
+export default function VideoList({ onFullscreenChange }) {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [error, setError] = useState(null);
@@ -287,6 +287,7 @@ export default function VideoList() {
           await document.msExitFullscreen();
         }
         setIsFullscreen(false);
+        if (onFullscreenChange) onFullscreenChange(false);
       } else {
         // Entrer en plein écran sur notre conteneur (pas via Vimeo)
         if (container.requestFullscreen) {
@@ -299,6 +300,7 @@ export default function VideoList() {
           await container.msRequestFullscreen();
         }
         setIsFullscreen(true);
+        if (onFullscreenChange) onFullscreenChange(true);
         // Calculer les dimensions pour letterboxing
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
@@ -339,6 +341,7 @@ export default function VideoList() {
       const isOurContainer = fullscreenElement === videoContainerRef.current;
 
       setIsFullscreen(isCurrentlyFullscreen && isOurContainer);
+      if (onFullscreenChange) onFullscreenChange(isCurrentlyFullscreen && isOurContainer);
       // Forcer l'affichage des contrôles quand on entre/sort du plein écran
       if (isCurrentlyFullscreen && isOurContainer) {
         setShowControls(true);
