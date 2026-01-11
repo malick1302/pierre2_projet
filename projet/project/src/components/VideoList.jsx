@@ -832,9 +832,9 @@ export default function VideoList({ onFullscreenChange }) {
                       }}
                     >
                       <img
-                        src="/images/playmiddle.png"
+                        src="/images/play.png"
                         alt="Play"
-                        className="w-[30px] h-[30px]"
+                        className="w-[25px] h-[25px]"
                       />
                     </button>
                   )}
@@ -917,52 +917,7 @@ export default function VideoList({ onFullscreenChange }) {
             />
           </button>
 
-          {/* Bouton Play/Pause en mode plein écran */}
-          {!isPlaying && (
-            <button
-              data-fullscreen-play
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (playerRef.current) {
-                  setShowControls(true);
-                  setIsHovering(true);
-                  try {
-                    await playerRef.current.play();
-                    setIsPlaying(true);
-                    if (controlsTimeoutRef.current) {
-                      clearTimeout(controlsTimeoutRef.current);
-                    }
-                    controlsTimeoutRef.current = setTimeout(() => {
-                      setIsHovering(false);
-                      setShowControls(false);
-                    }, 3000);
-                  } catch (err) {
-                    console.error("Error playing video:", err);
-                  }
-                }
-              }}
-              style={{
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 2147483647,
-                pointerEvents: 'auto',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <img
-                src="/images/play.png"
-                alt="Play"
-                className="w-[60px] h-[60px] md:w-[80px] md:h-[80px]"
-                style={{ display: 'block' }}
-              />
-            </button>
-          )}
-
-          {/* Pas de bouton pause en plein écran - uniquement play quand pas en lecture */}
+          {/* Pas de bouton play/pause au centre en plein écran - géré par le bouton dans le conteneur vidéo */}
 
           {/* Navbar */}
           <div
