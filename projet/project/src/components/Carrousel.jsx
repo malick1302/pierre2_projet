@@ -23,7 +23,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
     const TITLE_FONT_SIZE = 16;
 
     const VISIBLE_ITEMS_DESKTOP = 9;
-    const VISIBLE_ITEMS_TABLET = 5;
+    const VISIBLE_ITEMS_TABLET = 7;
     const VISIBLE_ITEMS_MOBILE = 3;
 
     const [dimensions, setDimensions] = useState({

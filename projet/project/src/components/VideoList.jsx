@@ -50,6 +50,7 @@ export default function VideoList({ onFullscreenChange }) {
     videoHeight: 210, // Hauteur de la vidéo (proportionnelle)
     bottomMargin: 18, // Marge en bas (fixe)
     isMobile: false, // État pour savoir si on est en mobile
+    isTablet: false, // État pour savoir si on est en tablette
     openIconWidth: 20, // Taille responsive de l'icône open
     openIconHeight: 20 // Taille responsive de l'icône open
   });
@@ -64,6 +65,7 @@ export default function VideoList({ onFullscreenChange }) {
       const containerWidth = containerRef.current ? containerRef.current.getBoundingClientRect().width : null;
 
       const isMobile = screenWidth <= 820; // Même breakpoint que le carrousel
+      const isTablet = screenWidth > 820 && screenWidth < 1024; // Tablette : entre 820px et 1024px
 
       const baseWidth = isMobile ? BASE_WIDTH_MOBILE : BASE_WIDTH_DESKTOP;
       const scaleRatio = screenWidth / baseWidth;
@@ -85,24 +87,44 @@ export default function VideoList({ onFullscreenChange }) {
         const bottomMarginFixed = refValues.bottomMargin; // Marge en bas fixe (28px)
         const baseCarouselSpacing = refValues.videoSpacing; // Espacement fixe entre vidéo et carrousel (25px)
 
-        // Calculer l'espace disponible pour la vidéo
-        // Hauteur totale utilisée = navbar + navbarSpacing + carouselSpacing + carousel + bottomMargin
-        const fixedHeight = navbarHeight + refValues.navbarSpacing + baseCarouselSpacing + carouselWithTitle + bottomMarginFixed;
-        const availableHeightForVideo = screenHeight - fixedHeight;
-
-        // La vidéo doit remplir exactement l'espace disponible pour éviter tout espace blanc
-        // Utiliser au minimum la hauteur de référence, sinon remplir tout l'espace disponible
-        const minVideoHeight = refValues.videoHeight;
-        videoHeight = Math.max(availableHeightForVideo, minVideoHeight);
-
-        // Si l'espace disponible est supérieur à la hauteur minimale, utiliser tout l'espace
-        // pour éviter l'espace blanc en dessous du carrousel
-        if (availableHeightForVideo > minVideoHeight) {
-          videoHeight = availableHeightForVideo;
+        // Supprimer l'espacement entre description et carrousel en tablette (comme mobile)
+        if (isTablet) {
+          carouselSpacing = 0; // Pas d'espacement en tablette (comme mobile)
+        } else {
+          // L'espacement entre vidéo et carrousel reste fixe (25px) pour desktop
+          carouselSpacing = baseCarouselSpacing;
         }
 
-        // L'espacement entre vidéo et carrousel reste fixe (25px)
-        carouselSpacing = baseCarouselSpacing;
+        if (isTablet) {
+          // En tablette : réduire la hauteur de la vidéo pour libérer de l'espace et éviter que le carrousel soit coupé
+          // Calculer l'espace disponible en tenant compte du carrousel et des marges
+          const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
+          const availableHeightForVideo = screenHeight - fixedHeight;
+          
+          // Réduire la vidéo à 60% de l'espace disponible pour laisser plus de place au carrousel
+          videoHeight = availableHeightForVideo * 0.6;
+          
+          // S'assurer d'avoir au moins une hauteur minimale raisonnable (mais pas plus que l'espace disponible)
+          const minVideoHeightTablet = refValues.videoHeight * 0.4; // Minimum 40% de la hauteur de référence
+          videoHeight = Math.max(videoHeight, minVideoHeightTablet);
+          videoHeight = Math.min(videoHeight, availableHeightForVideo * 0.65); // Maximum 65% de l'espace disponible
+        } else {
+          // Calculer l'espace disponible pour la vidéo (desktop uniquement)
+          // Hauteur totale utilisée = navbar + navbarSpacing + carouselSpacing + carousel + bottomMargin
+          const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
+          const availableHeightForVideo = screenHeight - fixedHeight;
+
+          // La vidéo doit remplir exactement l'espace disponible pour éviter tout espace blanc
+          // Utiliser au minimum la hauteur de référence, sinon remplir tout l'espace disponible
+          const minVideoHeight = refValues.videoHeight;
+          videoHeight = Math.max(availableHeightForVideo, minVideoHeight);
+
+          // Si l'espace disponible est supérieur à la hauteur minimale, utiliser tout l'espace
+          // pour éviter l'espace blanc en dessous du carrousel
+          if (availableHeightForVideo > minVideoHeight) {
+            videoHeight = availableHeightForVideo;
+          }
+        }
       }
 
       const bottomMarginFixed = refValues.bottomMargin || (isMobile ? 18 : 28); // Marge en bas fixe
@@ -121,6 +143,7 @@ export default function VideoList({ onFullscreenChange }) {
         videoHeight: videoHeight, // Adaptatif pour remplir l'espace disponible
         bottomMargin: bottomMarginFixed, // Fixe - marge en bas constante (18px mobile, 28px desktop)
         isMobile: isMobile, // État mobile pour le rendu
+        isTablet: isTablet, // État tablette pour le rendu
         openIconWidth: openIconWidth, // Taille responsive de l'icône open
         openIconHeight: openIconHeight // Taille responsive de l'icône open
       };
@@ -632,7 +655,7 @@ export default function VideoList({ onFullscreenChange }) {
           )}
 
           <div
-            className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start w-full"
+            className="source-sans-light flex flex-col lg:flex-row lg:gap-6 lg:items-start w-full"
             style={{
               paddingLeft: (spacing.isMobile || isFullscreen) ? '0' : `${spacing.horizontalMargin}px`,
               paddingRight: (spacing.isMobile || isFullscreen) ? '0' : `${spacing.horizontalMargin}px`,
@@ -904,14 +927,14 @@ export default function VideoList({ onFullscreenChange }) {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full m-[18px] mb-[0px] md:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[1.125rem] md:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
-              <h3 className="text-[12px] md:text-[1.25rem] font-[500] mb-[6px] md:mb-0" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+            <div className="w-full m-[18px] mb-[0px] lg:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 lg:ml-[1.125rem] lg:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
+              <h3 className="text-[12px] lg:text-[1.25rem] font-[500] mb-[6px] lg:mb-0" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.title}
               </h3>
-              <p className="text-[12px] font-HelveticaNeue md:text-[1.25rem] mb-[18px] md:mb-[2.41375rem] md:mt-[0.75rem] font-style: italic" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <p className="text-[12px] font-HelveticaNeue lg:text-[1.25rem] mb-[18px] lg:mb-[2.41375rem] lg:mt-[0.75rem] font-style: italic" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.soustitre}
               </p>
-              <p className="text-[12px] font-HelveticaNeue font-[300] md:text-[1.25rem] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <p className="text-[12px] font-HelveticaNeue font-[300] lg:text-[1.25rem] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.description}
               </p>
             </div>
