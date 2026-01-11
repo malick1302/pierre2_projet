@@ -710,15 +710,32 @@ export default function VideoList({ onFullscreenChange }) {
                           bottom: '0',
                           left: '0',
                           right: '0',
-
                           transition: 'opacity 0.3s ease-in-out',
                           zIndex: 15,
-                          pointerEvents: 'auto'
+                          pointerEvents: 'auto',
+                          fontFamily: "'Helvetica', 'Arial', sans-serif"
                         }}
                         onClick={(e) => e.stopPropagation()}
                         onMouseEnter={handleNavbarMouseEnter}
                         onMouseLeave={handleNavbarMouseLeave}
                       >
+                        {/* Texte PAUSE/PLAY */}
+                        <div
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleVideoClick();
+                          }}
+                          style={{
+                            fontSize: '12px',
+                            color: '#D1D1D1',
+                            cursor: 'pointer',
+                            fontFamily: "'Helvetica', 'Arial', sans-serif",
+                            userSelect: 'none'
+                          }}
+                        >
+                          {isPlaying ? 'PAUSE' : 'PLAY'}
+                        </div>
+
                         {/* Barre de progression */}
                         <div
                           className="relative flex-1 h-[1px] bg-gray-600 cursor-pointer rounded-full overflow-hidden"
@@ -758,99 +775,66 @@ export default function VideoList({ onFullscreenChange }) {
                           ></div>
                         </div>
 
-                        {/* Bouton Son */}
-                        <button
+                        {/* Texte MUTE/UNMUTE */}
+                        <div
                           onClick={(e) => {
                             e.stopPropagation();
                             handleToggleMute(e);
                           }}
-                          className="hover:scale-110 transition-transform bg-transparent border-none cursor-pointer flex items-center justify-center flex-shrink-0"
                           style={{
-                            pointerEvents: 'auto',
-                            padding: '0.25rem'
+                            fontSize: '12px',
+                            color: '#D1D1D1',
+                            cursor: 'pointer',
+                            fontFamily: "'Helvetica', 'Arial', sans-serif",
+                            userSelect: 'none'
                           }}
                         >
-                          {isMuted ? (
-                            <img
-                              src="/images/soundoff.png"
-                              alt="Son coupé"
-                              className="w-[10px] h-[10px] md:w-[15px] md:h-[15px]"
-                              style={{ display: 'block' }}
-                            />
-                          ) : (
-                            <img
-                              src="/images/soundon.png"
-                              alt="Son activé"
-                              className="w-[10px] h-[10px] md:w-[15px] md:h-[15px]"
-                              style={{ display: 'block' }}
-                            />
-                          )}
-                        </button>
+                          {isMuted ? 'UNMUTE' : 'MUTE'}
+                        </div>
 
                         {/* Bouton Fullscreen */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleFullscreen();
-                          }}
-                          className="hover:scale-110 transition-transform bg-transparent border-none cursor-pointer flex items-center justify-center flex-shrink-0"
-                          style={{
-                            pointerEvents: 'auto',
-                            padding: '0.25rem'
-                          }}
-                        >
-                          {isFullscreen ? (
+                        {!isFullscreen && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFullscreen();
+                            }}
+                            className="bg-transparent border-none cursor-pointer flex items-center justify-center flex-shrink-0"
+                            style={{
+                              pointerEvents: 'auto',
+                              padding: '0.25rem'
+                            }}
+                          >
                             <img
-                              src="/images/reduce.png"
-                              alt="Réduire"
-                              className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
-                              style={{ display: 'block' }}
-                            />
-                          ) : (
-                            <img
-                              src="/images/grow.png"
+                              src="/images/open.png"
                               alt="Plein écran"
                               className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
                               style={{ display: 'block' }}
                             />
-                          )}
-                        </button>
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
 
-                  {/* Play button - Toujours visible quand la vidéo est en pause ou terminée */}
+                  {/* Play button - Visible seulement quand la vidéo n'est pas en lecture */}
                   {!isPlaying && (
                     <button
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
-                        handleVideoClick();
+                        await handleVideoClick();
+                        // Le bouton disparaît automatiquement car isPlaying devient true
                       }}
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform z-10 bg-transparent border-none cursor-pointer"
-                      style={{ pointerEvents: 'auto' }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-transparent border-none cursor-pointer"
+                      style={{
+                        pointerEvents: 'auto',
+                        transition: 'opacity 0.2s ease-in-out'
+                      }}
                     >
                       <img
-                        src="/images/play.png"
+                        src="/images/playmiddle.png"
                         alt="Play"
-                        className="w-[60px] h-[60px] md:w-[80px] md:h-[80px]"
-                      />
-                    </button>
-                  )}
-
-                  {/* Pause button - Visible seulement après un clic sur l'écran pendant la lecture */}
-                  {isPlaying && showControls && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleVideoClick();
-                      }}
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform z-10 bg-transparent border-none cursor-pointer"
-                      style={{ pointerEvents: 'auto' }}
-                    >
-                      <img
-                        src="/images/pause.png"
-                        alt="Pause"
-                        className="w-[60px] h-[60px] md:w-[80px] md:h-[80px]"
+                        className="w-[30px] h-[30px]"
                       />
                     </button>
                   )}
@@ -907,6 +891,32 @@ export default function VideoList({ onFullscreenChange }) {
       {/* Navbar en mode plein écran - Rendu via Portal dans le body */}
       {isFullscreen && typeof document !== 'undefined' && createPortal(
         <>
+          {/* Bouton Close en haut à droite - Mode plein écran */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleFullscreen();
+            }}
+            style={{
+              position: 'fixed',
+              top: '1rem',
+              right: '1rem',
+              zIndex: 2147483647,
+              pointerEvents: 'auto',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.25rem'
+            }}
+          >
+            <img
+              src="/images/close.png"
+              alt="Fermer plein écran"
+              className="w-[20px] h-[20px] md:w-[25px] md:h-[25px]"
+              style={{ display: 'block' }}
+            />
+          </button>
+
           {/* Bouton Play/Pause en mode plein écran */}
           {!isPlaying && (
             <button
@@ -1050,34 +1060,6 @@ export default function VideoList({ onFullscreenChange }) {
               {isMuted ? 'UNMUTE' : 'MUTE'}
             </div>
 
-            {/* Bouton Fullscreen */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleFullscreen();
-              }}
-              className="hover:scale-110 transition-transform bg-transparent border-none cursor-pointer flex items-center justify-center flex-shrink-0"
-              style={{
-                pointerEvents: 'auto',
-                padding: '0.25rem'
-              }}
-            >
-              {isFullscreen ? (
-                <img
-                  src="/images/reduce.png"
-                  alt="Réduire"
-                  className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
-                  style={{ display: 'block' }}
-                />
-              ) : (
-                <img
-                  src="/images/grow.png"
-                  alt="Plein écran"
-                  className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
-                  style={{ display: 'block' }}
-                />
-              )}
-            </button>
           </div>
         </>,
         document.body
