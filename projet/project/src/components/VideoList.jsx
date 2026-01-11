@@ -303,9 +303,9 @@ export default function VideoList() {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         const aspectRatio = 16 / 9;
-        
+
         let iframeWidth, iframeHeight;
-        
+
         // Si l'écran est plus large que le ratio 16:9, on limite par la hauteur
         if (screenWidth / screenHeight > aspectRatio) {
           iframeHeight = screenHeight;
@@ -315,7 +315,7 @@ export default function VideoList() {
           iframeWidth = screenWidth;
           iframeHeight = screenWidth / aspectRatio;
         }
-        
+
         setFullscreenVideoDimensions({
           width: `${iframeWidth}px`,
           height: `${iframeHeight}px`
@@ -347,9 +347,9 @@ export default function VideoList() {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         const aspectRatio = 16 / 9;
-        
+
         let iframeWidth, iframeHeight;
-        
+
         // Si l'écran est plus large que le ratio 16:9, on limite par la hauteur
         if (screenWidth / screenHeight > aspectRatio) {
           iframeHeight = screenHeight;
@@ -359,7 +359,7 @@ export default function VideoList() {
           iframeWidth = screenWidth;
           iframeHeight = screenWidth / aspectRatio;
         }
-        
+
         setFullscreenVideoDimensions({
           width: `${iframeWidth}px`,
           height: `${iframeHeight}px`
