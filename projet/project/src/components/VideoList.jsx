@@ -243,12 +243,12 @@ export default function VideoList({ onFullscreenChange }) {
             setShowControls(true); // Afficher les contrôles à la fin
           });
 
-          // Définir le volume à 1 (son activé) par défaut
+          // Vérifier l'état initial du volume
           try {
-            await playerRef.current.setVolume(1);
-            setIsMuted(false);
+            const volume = await playerRef.current.getVolume();
+            setIsMuted(volume === 0);
           } catch (err) {
-            console.error("Error setting volume:", err);
+            console.error("Error getting volume:", err);
           }
         }
       }, 100);

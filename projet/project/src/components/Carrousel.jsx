@@ -93,14 +93,9 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
                 }
             }
 
-            // La hauteur reste proportionnelle à la largeur, mais augmentée pour mobile
+            // La hauteur reste proportionnelle à la largeur
             const aspectRatio = BASE_CARD_HEIGHT / BASE_CARD_WIDTH;
             let finalCardHeight = finalCardWidth * aspectRatio;
-
-            // Augmenter la hauteur pour mobile (images plus hautes)
-            if (mobile) {
-                finalCardHeight = finalCardHeight * 1.2; // +20% de hauteur pour mobile
-            }
 
             setDimensions({
                 cardWidth: finalCardWidth,
