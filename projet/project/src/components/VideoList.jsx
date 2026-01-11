@@ -618,8 +618,8 @@ export default function VideoList({ onFullscreenChange }) {
           <div
             className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start w-full"
             style={{
-              paddingLeft: spacing.isMobile ? '0' : `${spacing.horizontalMargin}px`,
-              paddingRight: spacing.isMobile ? '0' : `${spacing.horizontalMargin}px`,
+              paddingLeft: (spacing.isMobile || isFullscreen) ? '0' : `${spacing.horizontalMargin}px`,
+              paddingRight: (spacing.isMobile || isFullscreen) ? '0' : `${spacing.horizontalMargin}px`,
               boxSizing: 'border-box' // Inclure le padding dans la largeur totale
             }}
             data-debug-margin={spacing.horizontalMargin}

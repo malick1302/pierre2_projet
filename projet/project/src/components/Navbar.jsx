@@ -41,7 +41,7 @@ export default function Navbar() {
   return (
     <div
       ref={containerRef}
-      className="flex flex-row justify-between mt-[18px] md:mt-[12px] items-center text-grey-dark"
+      className="flex flex-row justify-between mt-[18px] md:mt-[12px] items-center"
       style={{
         paddingLeft: `${horizontalMargin}px`,
         paddingRight: `${horizontalMargin}px`,

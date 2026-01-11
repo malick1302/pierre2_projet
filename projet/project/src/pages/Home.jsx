@@ -26,9 +26,9 @@ const Home = () => {
     };
 
     return (
-        <div className="relative w-screen h-[100dvh] overflow-hidden scrollbar-hide">
+        <div className="relative w-screen h-[100dvh] overflow-hidden scrollbar-hide ">
             {/* Navbar avec marge top responsive */}
-            <div className="relative z-[300] text-custom-grey font-HelveticaNeue font-[400]">
+            <div className="relative z-[300] font-HelveticaNeue font-[400] text-custom-grey">
                 <Navbar />
             </div>
 
