@@ -10,7 +10,7 @@ const BASE_WIDTH_DESKTOP = 1440;
 // Valeurs de référence en px (basées sur le design Figma)
 const REFERENCE_VALUES = {
   mobile: {
-    navbarSpacing: 41, // Fixe
+    navbarSpacing: 0, // Fixe - Réduit pour mobile (était 41)
     videoSpacing: 80, // Fixe
     horizontalMargin: 15, // Fixe
     bottomMargin: 18 // Marge en bas fixe
@@ -47,7 +47,8 @@ export default function VideoList() {
     carouselSpacing: 80,
     horizontalMargin: 15,
     videoHeight: 210, // Hauteur de la vidéo (proportionnelle)
-    bottomMargin: 18 // Marge en bas (fixe)
+    bottomMargin: 18, // Marge en bas (fixe)
+    isMobile: false // État pour savoir si on est en mobile
   });
 
   // Calcul des dimensions proportionnelles basées sur la largeur réelle du conteneur
@@ -71,7 +72,8 @@ export default function VideoList() {
       let carouselSpacing;
 
       if (isMobile) {
-        videoHeight = 154 * scaleRatio;
+        // Augmenter la hauteur de la vidéo en mobile pour qu'elle soit plus grande
+        videoHeight = 220 * scaleRatio; // Augmenté de 154 à 180
         carouselSpacing = refValues.videoSpacing; // Fixe pour mobile
       } else {
         // Pour desktop : fixer les marges et adapter la vidéo pour remplir l'espace sans espace blanc
@@ -108,7 +110,8 @@ export default function VideoList() {
         carouselSpacing: carouselSpacing, // Fixe pour desktop, variable pour mobile
         horizontalMargin: refValues.horizontalMargin, // Fixe - ne change pas avec l'écran
         videoHeight: videoHeight, // Adaptatif pour remplir l'espace disponible
-        bottomMargin: bottomMarginFixed // Fixe - marge en bas constante (18px mobile, 28px desktop)
+        bottomMargin: bottomMarginFixed, // Fixe - marge en bas constante (18px mobile, 28px desktop)
+        isMobile: isMobile // État mobile pour le rendu
       };
 
       // Logs de débogage
@@ -569,8 +572,8 @@ export default function VideoList() {
           <div
             className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start w-full"
             style={{
-              paddingLeft: `${spacing.horizontalMargin}px`,
-              paddingRight: `${spacing.horizontalMargin}px`,
+              paddingLeft: spacing.isMobile ? '0' : `${spacing.horizontalMargin}px`,
+              paddingRight: spacing.isMobile ? '0' : `${spacing.horizontalMargin}px`,
               boxSizing: 'border-box' // Inclure le padding dans la largeur totale
             }}
             data-debug-margin={spacing.horizontalMargin}
@@ -580,7 +583,9 @@ export default function VideoList() {
               className="md:border-none relative flex-shrink-0"
               style={{
                 width: '100%',
-                maxWidth: `${(spacing.videoHeight * 16) / 9}px`,
+                maxWidth: spacing.isMobile ? '100%' : `${(spacing.videoHeight * 16) / 9}px`,
+                paddingLeft: spacing.isMobile ? `${spacing.horizontalMargin}px` : '0',
+                paddingRight: spacing.isMobile ? `${spacing.horizontalMargin}px` : '0',
                 boxSizing: 'border-box',
                 position: 'relative' // S'assurer que le positionnement absolu des enfants fonctionne
               }}
@@ -593,7 +598,7 @@ export default function VideoList() {
                     style={{
                       height: isFullscreen ? '100vh' : `${spacing.videoHeight}px`,
                       width: isFullscreen ? '100vw' : '100%',
-                      maxWidth: isFullscreen ? '100vw' : `${(spacing.videoHeight * 16) / 9}px`,
+                      maxWidth: isFullscreen ? '100vw' : (spacing.isMobile ? '100%' : `${(spacing.videoHeight * 16) / 9}px`),
                       boxSizing: 'border-box',
                       position: 'relative', // Position relative pour les boutons absolus à l'intérieur
                       backgroundColor: isFullscreen ? '#000' : 'transparent'
@@ -647,7 +652,7 @@ export default function VideoList() {
                           bottom: '0',
                           left: '0',
                           right: '0',
-                        
+
                           transition: 'opacity 0.3s ease-in-out',
                           zIndex: 15,
                           pointerEvents: 'auto'
@@ -801,7 +806,7 @@ export default function VideoList() {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[1.125rem] md:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
+            <div className="w-full m-[18px] mb-[0px] md:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[1.125rem] md:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
               <h3 className="text-2xl md:text-[1.25rem] font-[500] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.title}
               </h3>

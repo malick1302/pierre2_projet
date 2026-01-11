@@ -17,7 +17,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
 
     // Dimensions uniformes - toutes les images ont la même largeur
     const BASE_CARD_WIDTH = 100; // Largeur de base
-    const BASE_GAP = 70; // Gap uniforme entre toutes les images
+    const BASE_GAP = 70; // Gap uniforme entre toutes les images (desktop)
+    const BASE_GAP_MOBILE = 30; // Gap réduit pour mobile
     const BASE_CARD_HEIGHT = 140; // Hauteur de base réduite pour correspondre à l'espacement
     const TITLE_FONT_SIZE = 16;
 
@@ -58,22 +59,21 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
             let finalCardWidth;
 
             if (mobile) {
-                // Mobile : images qui grandissent 2 fois moins vite avec marges latérales
+                // Mobile : images plus grandes avec gap réduit
                 const mobilePadding = 20; // Espace à gauche et à droite (40px au total)
                 const availableWidth = containerWidth - (2 * mobilePadding); // Largeur disponible moins les marges
                 const totalGaps = 2; // 2 gaps pour 3 images
-                const availableWidthForCards = Math.max(0, availableWidth - (totalGaps * BASE_GAP));
+                const availableWidthForCards = Math.max(0, availableWidth - (totalGaps * BASE_GAP_MOBILE));
                 const baseCardWidth = availableWidthForCards / 3; // Largeur de base pour 3 images
 
-                // Calculer la largeur de référence (390px pour mobile)
-                const referenceWidth = 390;
-                const scaleFactor = (containerWidth - (2 * mobilePadding)) / referenceWidth;
+                // Augmenter la taille des images (multiplicateur pour les rendre plus grandes)
+                const sizeMultiplier = 1.15; // +15% pour rendre les images plus grandes
+                const scaledCardWidth = baseCardWidth * sizeMultiplier;
 
-                // Les images grandissent 2 fois moins vite que l'écran
-                const scaledCardWidth = BASE_CARD_WIDTH * (1 + (scaleFactor - 1) / 2);
-
-                // Prendre la plus petite valeur pour garantir 3 images visibles
-                finalCardWidth = Math.min(baseCardWidth, scaledCardWidth);
+                // Utiliser cette largeur si elle permet toujours 3 images
+                // Sinon, ajuster pour garantir 3 images
+                const maxWidthFor3 = (availableWidth - (totalGaps * BASE_GAP_MOBILE)) / 3;
+                finalCardWidth = Math.min(scaledCardWidth, maxWidthFor3);
 
                 // S'assurer que la largeur est valide et positive
                 if (finalCardWidth <= 0 || !isFinite(finalCardWidth)) {
@@ -93,13 +93,18 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
                 }
             }
 
-            // La hauteur reste proportionnelle à la largeur
+            // La hauteur reste proportionnelle à la largeur, mais augmentée pour mobile
             const aspectRatio = BASE_CARD_HEIGHT / BASE_CARD_WIDTH;
-            const finalCardHeight = finalCardWidth * aspectRatio;
+            let finalCardHeight = finalCardWidth * aspectRatio;
+            
+            // Augmenter la hauteur pour mobile (images plus hautes)
+            if (mobile) {
+                finalCardHeight = finalCardHeight * 1.2; // +20% de hauteur pour mobile
+            }
 
             setDimensions({
                 cardWidth: finalCardWidth,
-                gap: BASE_GAP, // Gap uniforme pour toutes
+                gap: mobile ? BASE_GAP_MOBILE : BASE_GAP, // Gap réduit pour mobile, normal pour desktop
                 cardHeight: finalCardHeight
             });
         };
