@@ -100,10 +100,10 @@ export default function VideoList({ onFullscreenChange }) {
           // Calculer l'espace disponible en tenant compte du carrousel et des marges
           const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
           const availableHeightForVideo = screenHeight - fixedHeight;
-          
+
           // Réduire la vidéo à 70% de l'espace disponible pour laisser de la place au carrousel
           videoHeight = availableHeightForVideo * 0.7;
-          
+
           // S'assurer d'avoir au moins une hauteur minimale raisonnable (mais pas plus que l'espace disponible)
           const minVideoHeightTablet = refValues.videoHeight * 0.4; // Minimum 40% de la hauteur de référence
           videoHeight = Math.max(videoHeight, minVideoHeightTablet);
