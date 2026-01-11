@@ -62,8 +62,8 @@ export default function VideoList({ onFullscreenChange }) {
   // Calcul des dimensions proportionnelles basées sur la largeur réelle du conteneur
   useEffect(() => {
     const calculateSpacing = () => {
-      // Utiliser document.documentElement.clientWidth pour une mesure plus fiable
-      const screenWidth = document.documentElement.clientWidth || window.innerWidth;
+      // Utiliser window.innerWidth pour être cohérent avec le carrousel
+      const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight || document.documentElement.clientHeight;
       const windowWidth = window.innerWidth;
       const containerWidth = containerRef.current ? containerRef.current.getBoundingClientRect().width : null;
@@ -104,8 +104,8 @@ export default function VideoList({ onFullscreenChange }) {
           carouselSpacing = baseCarouselSpacing;
         }
 
-        if (isTablet && !isTabletLarge) {
-          // En tablette normale (5 images) : réduire la hauteur de la vidéo pour libérer de l'espace
+        if ((isTablet && !isTabletLarge) || isTabletLarge) {
+          // En tablette normale (5 images) et tablette large (7 images) : réduire la hauteur de la vidéo pour libérer de l'espace
           // Calculer l'espace disponible en tenant compte du carrousel et des marges
           const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
           const availableHeightForVideo = screenHeight - fixedHeight;
@@ -117,7 +117,7 @@ export default function VideoList({ onFullscreenChange }) {
           const minVideoHeightTablet = refValues.videoHeight * 0.4; // Minimum 40% de la hauteur de référence
           videoHeight = Math.max(videoHeight, minVideoHeightTablet);
           videoHeight = Math.min(videoHeight, availableHeightForVideo * 0.75); // Maximum 75% de l'espace disponible
-        } else if (isTabletLarge || !isTablet) {
+        } else if (!isTablet) {
           // Calculer l'espace disponible pour la vidéo (desktop uniquement)
           // Hauteur totale utilisée = navbar + navbarSpacing + carouselSpacing + carousel + bottomMargin
           const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
@@ -144,7 +144,7 @@ export default function VideoList({ onFullscreenChange }) {
       const openIconWidth = isMobile ? openIconBaseWidth * scaleRatio : openIconBaseWidth;
       const openIconHeight = isMobile ? openIconBaseHeight * scaleRatio : openIconBaseHeight;
 
-      // Tailles de police responsive pour la tablette large (7 images)
+      // Tailles de police responsive pour la tablette large (7 images) et tablette normale (5 images)
       const baseTitleFontSize = 20; // 1.25rem = 20px en base
       const baseSubtitleFontSize = 20; // 1.25rem = 20px en base
       const baseDescriptionFontSize = 20; // 1.25rem = 20px en base
@@ -154,10 +154,16 @@ export default function VideoList({ onFullscreenChange }) {
       let descriptionFontSize = 12; // Par défaut mobile
       
       if (isTabletLarge) {
-        // Pour tablette large (7 images), utiliser scaleRatio pour rendre responsive
+        // Pour tablette large (7 images, 900px-1024px), utiliser scaleRatio pour rendre responsive
         titleFontSize = baseTitleFontSize * scaleRatio;
         subtitleFontSize = baseSubtitleFontSize * scaleRatio;
         descriptionFontSize = baseDescriptionFontSize * scaleRatio;
+      } else if (isTablet && !isTabletLarge) {
+        // Pour tablette normale (5 images, 820px-900px), utiliser scaleRatio pour rendre responsive
+        // Utiliser une taille légèrement plus petite que la tablette large
+        titleFontSize = baseTitleFontSize * scaleRatio * 0.9;
+        subtitleFontSize = baseSubtitleFontSize * scaleRatio * 0.9;
+        descriptionFontSize = baseDescriptionFontSize * scaleRatio * 0.9;
       } else if (!isMobile && !isTablet) {
         // Pour desktop, taille fixe
         titleFontSize = baseTitleFontSize;
@@ -969,36 +975,37 @@ export default function VideoList({ onFullscreenChange }) {
               style={{ 
                 boxSizing: 'border-box',
                 width: spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '20.83vw' : '100%',
+                maxWidth: spacing.isTablet && !spacing.isTabletLarge ? 'calc(100% - 36px)' : undefined, // Pour tablette normale, éviter le débordement
                 margin: spacing.isMobile ? '18px 18px 0px 18px' : (spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '1.125rem 0px 0px 1.125rem' : '18px 18px 0px 18px'),
                 marginTop: spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '1.125rem' : '1rem'
               }}
             >
               <h3 
-                className={`text-[12px] ${spacing.isTabletLarge ? '' : 'lg:text-[1.25rem] lg:mb-0'} font-[500] mb-[6px]`} 
+                className={`text-[12px] ${spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? '' : 'lg:text-[1.25rem] lg:mb-0'} font-[500] mb-[6px]`} 
                 style={{ 
                   fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif",
-                  fontSize: spacing.isTabletLarge ? `${spacing.titleFontSize}px` : undefined,
-                  marginBottom: spacing.isTabletLarge ? '0' : undefined
+                  fontSize: spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? `${spacing.titleFontSize}px` : undefined,
+                  marginBottom: spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? '0' : undefined
                 }}
               >
                 {selectedVideo?.title}
               </h3>
               <p 
-                className={`text-[12px] font-HelveticaNeue ${spacing.isTabletLarge ? '' : 'lg:text-[1.25rem] lg:mb-[2.41375rem] lg:mt-[0.75rem]'} mb-[18px] font-style: italic`} 
+                className={`text-[12px] font-HelveticaNeue ${spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? '' : 'lg:text-[1.25rem] lg:mb-[2.41375rem] lg:mt-[0.75rem]'} mb-[18px] font-style: italic`} 
                 style={{ 
                   fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif",
-                  fontSize: spacing.isTabletLarge ? `${spacing.subtitleFontSize}px` : undefined,
-                  marginBottom: spacing.isTabletLarge ? `${2.41375 * spacing.subtitleFontSize / 20}rem` : undefined,
-                  marginTop: spacing.isTabletLarge ? `${0.75 * spacing.subtitleFontSize / 20}rem` : undefined
+                  fontSize: spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? `${spacing.subtitleFontSize}px` : undefined,
+                  marginBottom: spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? `${2.41375 * spacing.subtitleFontSize / 20}rem` : undefined,
+                  marginTop: spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? `${0.75 * spacing.subtitleFontSize / 20}rem` : undefined
                 }}
               >
                 {selectedVideo?.soustitre}
               </p>
               <p 
-                className={`text-[12px] font-HelveticaNeue font-[300] ${spacing.isTabletLarge ? '' : 'lg:text-[1.25rem]'} `} 
+                className={`text-[12px] font-HelveticaNeue font-[300] ${spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? '' : 'lg:text-[1.25rem]'} `} 
                 style={{ 
                   fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif",
-                  fontSize: spacing.isTabletLarge ? `${spacing.descriptionFontSize}px` : undefined
+                  fontSize: spacing.isTabletLarge || (spacing.isTablet && !spacing.isTabletLarge) ? `${spacing.descriptionFontSize}px` : undefined
                 }}
               >
                 {selectedVideo?.description}
