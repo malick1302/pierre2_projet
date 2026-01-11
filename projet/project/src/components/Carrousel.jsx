@@ -75,6 +75,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
                 const maxWidthFor3 = (availableWidth - (totalGaps * BASE_GAP_MOBILE)) / 3;
                 finalCardWidth = Math.min(scaledCardWidth, maxWidthFor3);
 
+                // Limiter la taille maximale pour éviter que les images soient trop grandes près de 820px
+                const MAX_CARD_WIDTH_MOBILE = 120; // Largeur maximale pour les images en mobile (réduite pour voir les titres)
+                finalCardWidth = Math.min(finalCardWidth, MAX_CARD_WIDTH_MOBILE);
+
                 // S'assurer que la largeur est valide et positive
                 if (finalCardWidth <= 0 || !isFinite(finalCardWidth)) {
                     finalCardWidth = BASE_CARD_WIDTH; // Valeur par défaut
