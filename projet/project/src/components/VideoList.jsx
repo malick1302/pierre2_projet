@@ -733,7 +733,30 @@ export default function VideoList({ onFullscreenChange }) {
                         <div
                           onClick={async (e) => {
                             e.stopPropagation();
-                            await handleVideoClick();
+                            if (isPlaying) {
+                              // Si en lecture, mettre en pause
+                              await handleVideoClick();
+                            } else {
+                              // Si en pause, masquer immédiatement le bouton play.png au centre et lancer la vidéo
+                              setIsPlaying(true);
+                              if (playerRef.current) {
+                                try {
+                                  setShowControls(true);
+                                  setIsHovering(true);
+                                  if (controlsTimeoutRef.current) {
+                                    clearTimeout(controlsTimeoutRef.current);
+                                  }
+                                  await playerRef.current.play();
+                                  controlsTimeoutRef.current = setTimeout(() => {
+                                    setIsHovering(false);
+                                    setShowControls(false);
+                                  }, 3000);
+                                } catch (err) {
+                                  console.error("Error playing video:", err);
+                                  setIsPlaying(false);
+                                }
+                              }
+                            }
                           }}
                           style={{
                             fontSize: '12px',
@@ -882,13 +905,13 @@ export default function VideoList({ onFullscreenChange }) {
 
             {/* Infos vidéo */}
             <div className="w-full m-[18px] mb-[0px] md:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[1.125rem] md:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
-              <h3 className="text-2xl md:text-[1.25rem] font-[500] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <h3 className="text-[12px] md:text-[1.25rem] font-[500] mb-[6px] md:mb-0" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.title}
               </h3>
-              <p className="text-sm font-HelveticaNeue md:text-[1.25rem] md:mb-[2.41375rem] md:mt-[0.75rem] font-style: italic" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <p className="text-[12px] font-HelveticaNeue md:text-[1.25rem] mb-[18px] md:mb-[2.41375rem] md:mt-[0.75rem] font-style: italic" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.soustitre}
               </p>
-              <p className="text-sm font-HelveticaNeue font-[300] md:text-[1.25rem] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <p className="text-[12px] font-HelveticaNeue font-[300] md:text-[1.25rem] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
                 {selectedVideo?.description}
               </p>
             </div>
@@ -979,7 +1002,30 @@ export default function VideoList({ onFullscreenChange }) {
             <div
               onClick={async (e) => {
                 e.stopPropagation();
-                await handleVideoClick();
+                if (isPlaying) {
+                  // Si en lecture, mettre en pause
+                  await handleVideoClick();
+                } else {
+                  // Si en pause, masquer immédiatement le bouton play.png au centre et lancer la vidéo
+                  setIsPlaying(true);
+                  if (playerRef.current) {
+                    try {
+                      setShowControls(true);
+                      setIsHovering(true);
+                      if (controlsTimeoutRef.current) {
+                        clearTimeout(controlsTimeoutRef.current);
+                      }
+                      await playerRef.current.play();
+                      controlsTimeoutRef.current = setTimeout(() => {
+                        setIsHovering(false);
+                        setShowControls(false);
+                      }, 3000);
+                    } catch (err) {
+                      console.error("Error playing video:", err);
+                      setIsPlaying(false);
+                    }
+                  }
+                }
               }}
               style={{
                 fontSize: '12px',
