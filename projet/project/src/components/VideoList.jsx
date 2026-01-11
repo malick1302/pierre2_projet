@@ -49,7 +49,9 @@ export default function VideoList({ onFullscreenChange }) {
     horizontalMargin: 15,
     videoHeight: 210, // Hauteur de la vidéo (proportionnelle)
     bottomMargin: 18, // Marge en bas (fixe)
-    isMobile: false // État pour savoir si on est en mobile
+    isMobile: false, // État pour savoir si on est en mobile
+    openIconWidth: 20, // Taille responsive de l'icône open
+    openIconHeight: 20 // Taille responsive de l'icône open
   });
 
   // Calcul des dimensions proportionnelles basées sur la largeur réelle du conteneur
@@ -105,6 +107,12 @@ export default function VideoList({ onFullscreenChange }) {
 
       const bottomMarginFixed = refValues.bottomMargin || (isMobile ? 18 : 28); // Marge en bas fixe
 
+      // Taille de l'icône open responsive (proportionnelle)
+      const openIconBaseWidth = 20; // Taille de base sur desktop
+      const openIconBaseHeight = 20; // Taille de base sur desktop
+      const openIconWidth = isMobile ? openIconBaseWidth * scaleRatio : openIconBaseWidth;
+      const openIconHeight = isMobile ? openIconBaseHeight * scaleRatio : openIconBaseHeight;
+
       const newSpacing = {
         navbarSpacing: refValues.navbarSpacing, // Fixe - ne change pas avec l'écran
         videoSpacing: refValues.videoSpacing, // Fixe - ne change pas avec l'écran
@@ -112,7 +120,9 @@ export default function VideoList({ onFullscreenChange }) {
         horizontalMargin: refValues.horizontalMargin, // Fixe - ne change pas avec l'écran
         videoHeight: videoHeight, // Adaptatif pour remplir l'espace disponible
         bottomMargin: bottomMarginFixed, // Fixe - marge en bas constante (18px mobile, 28px desktop)
-        isMobile: isMobile // État mobile pour le rendu
+        isMobile: isMobile, // État mobile pour le rendu
+        openIconWidth: openIconWidth, // Taille responsive de l'icône open
+        openIconHeight: openIconHeight // Taille responsive de l'icône open
       };
 
       // Logs de débogage
@@ -808,8 +818,12 @@ export default function VideoList({ onFullscreenChange }) {
                             <img
                               src="/images/open.png"
                               alt="Plein écran"
-                              className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
-                              style={{ display: 'block' }}
+                              style={{
+                                display: 'block',
+                                width: `${spacing.openIconWidth}px`,
+                                height: `${spacing.openIconHeight}px`,
+                                marginBottom: spacing.isMobile ? '3px' : '0'
+                              }}
                             />
                           </button>
                         )}
@@ -822,8 +836,27 @@ export default function VideoList({ onFullscreenChange }) {
                     <button
                       onClick={async (e) => {
                         e.stopPropagation();
-                        await handleVideoClick();
-                        // Le bouton disparaît automatiquement car isPlaying devient true
+                        // Masquer immédiatement le bouton en définissant isPlaying à true
+                        setIsPlaying(true);
+                        // Lancer la vidéo directement
+                        if (playerRef.current) {
+                          try {
+                            setShowControls(true);
+                            setIsHovering(true);
+                            if (controlsTimeoutRef.current) {
+                              clearTimeout(controlsTimeoutRef.current);
+                            }
+                            await playerRef.current.play();
+                            controlsTimeoutRef.current = setTimeout(() => {
+                              setIsHovering(false);
+                              setShowControls(false);
+                            }, 3000);
+                          } catch (err) {
+                            console.error("Error playing video:", err);
+                            // En cas d'erreur, remettre isPlaying à false
+                            setIsPlaying(false);
+                          }
+                        }
                       }}
                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-transparent border-none cursor-pointer"
                       style={{
