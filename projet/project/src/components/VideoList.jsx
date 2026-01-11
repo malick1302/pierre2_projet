@@ -592,7 +592,11 @@ export default function VideoList({ onFullscreenChange }) {
       style={{
         boxSizing: 'border-box',
         overflow: 'hidden', // Pas de scroll
-        paddingBottom: `${spacing.bottomMargin}px`, // Marge en bas fixe (18px mobile, 28px desktop)
+        paddingBottom: isFullscreen ? '0' : `${spacing.bottomMargin}px`, // Marge en bas fixe (18px mobile, 28px desktop)
+        paddingLeft: isFullscreen ? '0' : undefined,
+        paddingRight: isFullscreen ? '0' : undefined,
+        paddingTop: isFullscreen ? '0' : undefined,
+        margin: isFullscreen ? '0' : undefined,
         height: '100vh', // Hauteur totale de la fenêtre
         display: 'flex',
         flexDirection: 'column',
@@ -607,13 +611,15 @@ export default function VideoList({ onFullscreenChange }) {
       ) : (
         <>
           {/* Espacement Navbar → Video - proportionnel */}
-          <div
-            style={{
-              height: `${spacing.navbarSpacing}px`,
-              backgroundColor: 'transparent' // Pour forcer l'application du style
-            }}
-            data-debug-spacing={spacing.navbarSpacing}
-          />
+          {!isFullscreen && (
+            <div
+              style={{
+                height: `${spacing.navbarSpacing}px`,
+                backgroundColor: 'transparent' // Pour forcer l'application du style
+              }}
+              data-debug-spacing={spacing.navbarSpacing}
+            />
+          )}
 
           <div
             className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start w-full"
@@ -630,10 +636,11 @@ export default function VideoList({ onFullscreenChange }) {
               style={{
                 width: '100%',
                 maxWidth: spacing.isMobile ? '100%' : `${(spacing.videoHeight * 16) / 9}px`,
-                paddingLeft: spacing.isMobile ? `${spacing.horizontalMargin}px` : '0',
-                paddingRight: spacing.isMobile ? `${spacing.horizontalMargin}px` : '0',
+                paddingLeft: isFullscreen ? '0' : (spacing.isMobile ? `${spacing.horizontalMargin}px` : '0'),
+                paddingRight: isFullscreen ? '0' : (spacing.isMobile ? `${spacing.horizontalMargin}px` : '0'),
                 boxSizing: 'border-box',
-                position: 'relative' // S'assurer que le positionnement absolu des enfants fonctionne
+                position: 'relative', // S'assurer que le positionnement absolu des enfants fonctionne
+                margin: isFullscreen ? '0' : undefined
               }}
             >
               {selectedVideo && selectedVideo.url ? (
