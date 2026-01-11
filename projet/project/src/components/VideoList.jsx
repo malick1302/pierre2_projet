@@ -51,8 +51,12 @@ export default function VideoList({ onFullscreenChange }) {
     bottomMargin: 18, // Marge en bas (fixe)
     isMobile: false, // État pour savoir si on est en mobile
     isTablet: false, // État pour savoir si on est en tablette
+    isTabletLarge: false, // État pour savoir si on est en tablette large (7 images)
     openIconWidth: 20, // Taille responsive de l'icône open
-    openIconHeight: 20 // Taille responsive de l'icône open
+    openIconHeight: 20, // Taille responsive de l'icône open
+    titleFontSize: 12, // Taille de police responsive pour le titre
+    subtitleFontSize: 12, // Taille de police responsive pour le sous-titre
+    descriptionFontSize: 12 // Taille de police responsive pour la description
   });
 
   // Calcul des dimensions proportionnelles basées sur la largeur réelle du conteneur
@@ -66,6 +70,7 @@ export default function VideoList({ onFullscreenChange }) {
 
       const isMobile = screenWidth <= 820; // Même breakpoint que le carrousel
       const isTablet = screenWidth > 820 && screenWidth < 1024; // Tablette : entre 820px et 1024px
+      const isTabletLarge = screenWidth >= 900 && screenWidth < 1024; // Zone tablette large avec 7 images
 
       const baseWidth = isMobile ? BASE_WIDTH_MOBILE : BASE_WIDTH_DESKTOP;
       const scaleRatio = screenWidth / baseWidth;
@@ -87,16 +92,20 @@ export default function VideoList({ onFullscreenChange }) {
         const bottomMarginFixed = refValues.bottomMargin; // Marge en bas fixe (28px)
         const baseCarouselSpacing = refValues.videoSpacing; // Espacement fixe entre vidéo et carrousel (25px)
 
-        // Supprimer l'espacement entre description et carrousel en tablette (comme mobile)
-        if (isTablet) {
-          carouselSpacing = 0; // Pas d'espacement en tablette (comme mobile)
+        // Gérer l'espacement selon le type de tablette
+        if (isTabletLarge) {
+          // En tablette large (7 images) : espacement normal comme desktop
+          carouselSpacing = baseCarouselSpacing;
+        } else if (isTablet) {
+          // En tablette normale (5 images) : pas d'espacement (comme mobile)
+          carouselSpacing = 0;
         } else {
           // L'espacement entre vidéo et carrousel reste fixe (25px) pour desktop
           carouselSpacing = baseCarouselSpacing;
         }
 
-        if (isTablet) {
-          // En tablette : réduire la hauteur de la vidéo pour libérer de l'espace et éviter que le carrousel soit coupé
+        if (isTablet && !isTabletLarge) {
+          // En tablette normale (5 images) : réduire la hauteur de la vidéo pour libérer de l'espace
           // Calculer l'espace disponible en tenant compte du carrousel et des marges
           const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
           const availableHeightForVideo = screenHeight - fixedHeight;
@@ -108,7 +117,7 @@ export default function VideoList({ onFullscreenChange }) {
           const minVideoHeightTablet = refValues.videoHeight * 0.4; // Minimum 40% de la hauteur de référence
           videoHeight = Math.max(videoHeight, minVideoHeightTablet);
           videoHeight = Math.min(videoHeight, availableHeightForVideo * 0.75); // Maximum 75% de l'espace disponible
-        } else {
+        } else if (isTabletLarge || !isTablet) {
           // Calculer l'espace disponible pour la vidéo (desktop uniquement)
           // Hauteur totale utilisée = navbar + navbarSpacing + carouselSpacing + carousel + bottomMargin
           const fixedHeight = navbarHeight + refValues.navbarSpacing + carouselSpacing + carouselWithTitle + bottomMarginFixed;
@@ -135,6 +144,27 @@ export default function VideoList({ onFullscreenChange }) {
       const openIconWidth = isMobile ? openIconBaseWidth * scaleRatio : openIconBaseWidth;
       const openIconHeight = isMobile ? openIconBaseHeight * scaleRatio : openIconBaseHeight;
 
+      // Tailles de police responsive pour la tablette large (7 images)
+      const baseTitleFontSize = 20; // 1.25rem = 20px en base
+      const baseSubtitleFontSize = 20; // 1.25rem = 20px en base
+      const baseDescriptionFontSize = 20; // 1.25rem = 20px en base
+      
+      let titleFontSize = 12; // Par défaut mobile
+      let subtitleFontSize = 12; // Par défaut mobile
+      let descriptionFontSize = 12; // Par défaut mobile
+      
+      if (isTabletLarge) {
+        // Pour tablette large (7 images), utiliser scaleRatio pour rendre responsive
+        titleFontSize = baseTitleFontSize * scaleRatio;
+        subtitleFontSize = baseSubtitleFontSize * scaleRatio;
+        descriptionFontSize = baseDescriptionFontSize * scaleRatio;
+      } else if (!isMobile && !isTablet) {
+        // Pour desktop, taille fixe
+        titleFontSize = baseTitleFontSize;
+        subtitleFontSize = baseSubtitleFontSize;
+        descriptionFontSize = baseDescriptionFontSize;
+      }
+
       const newSpacing = {
         navbarSpacing: refValues.navbarSpacing, // Fixe - ne change pas avec l'écran
         videoSpacing: refValues.videoSpacing, // Fixe - ne change pas avec l'écran
@@ -144,8 +174,12 @@ export default function VideoList({ onFullscreenChange }) {
         bottomMargin: bottomMarginFixed, // Fixe - marge en bas constante (18px mobile, 28px desktop)
         isMobile: isMobile, // État mobile pour le rendu
         isTablet: isTablet, // État tablette pour le rendu
+        isTabletLarge: isTabletLarge, // État tablette large (7 images) pour le rendu
         openIconWidth: openIconWidth, // Taille responsive de l'icône open
-        openIconHeight: openIconHeight // Taille responsive de l'icône open
+        openIconHeight: openIconHeight, // Taille responsive de l'icône open
+        titleFontSize: titleFontSize, // Taille de police responsive pour le titre
+        subtitleFontSize: subtitleFontSize, // Taille de police responsive pour le sous-titre
+        descriptionFontSize: descriptionFontSize // Taille de police responsive pour la description
       };
 
       // Logs de débogage
@@ -655,8 +689,11 @@ export default function VideoList({ onFullscreenChange }) {
           )}
 
           <div
-            className="source-sans-light flex flex-col lg:flex-row lg:gap-6 lg:items-start w-full"
+            className="source-sans-light flex w-full"
             style={{
+              flexDirection: spacing.isTabletLarge ? 'row' : (spacing.isTablet || spacing.isMobile ? 'column' : 'row'),
+              gap: spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '1.5rem' : '0',
+              alignItems: spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? 'flex-start' : 'stretch',
               paddingLeft: (spacing.isMobile || isFullscreen) ? '0' : `${spacing.horizontalMargin}px`,
               paddingRight: (spacing.isMobile || isFullscreen) ? '0' : `${spacing.horizontalMargin}px`,
               boxSizing: 'border-box' // Inclure le padding dans la largeur totale
@@ -927,14 +964,43 @@ export default function VideoList({ onFullscreenChange }) {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full m-[18px] mb-[0px] lg:w-[20.83vw] flex flex-col justify-start font-HelveticaNeue font-light mt-4 lg:ml-[1.125rem] lg:mt-[1.125rem] flex-shrink-0 text-grey-dark" style={{ boxSizing: 'border-box' }}>
-              <h3 className="text-[12px] lg:text-[1.25rem] font-[500] mb-[6px] lg:mb-0" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+            <div 
+              className="flex flex-col justify-start font-HelveticaNeue font-light flex-shrink-0 text-grey-dark" 
+              style={{ 
+                boxSizing: 'border-box',
+                width: spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '20.83vw' : '100%',
+                margin: spacing.isMobile ? '18px 18px 0px 18px' : (spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '1.125rem 0px 0px 1.125rem' : '18px 18px 0px 18px'),
+                marginTop: spacing.isTabletLarge || (!spacing.isTablet && !spacing.isMobile) ? '1.125rem' : '1rem'
+              }}
+            >
+              <h3 
+                className={`text-[12px] ${spacing.isTabletLarge ? '' : 'lg:text-[1.25rem] lg:mb-0'} font-[500] mb-[6px]`} 
+                style={{ 
+                  fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif",
+                  fontSize: spacing.isTabletLarge ? `${spacing.titleFontSize}px` : undefined,
+                  marginBottom: spacing.isTabletLarge ? '0' : undefined
+                }}
+              >
                 {selectedVideo?.title}
               </h3>
-              <p className="text-[12px] font-HelveticaNeue lg:text-[1.25rem] mb-[18px] lg:mb-[2.41375rem] lg:mt-[0.75rem] font-style: italic" style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <p 
+                className={`text-[12px] font-HelveticaNeue ${spacing.isTabletLarge ? '' : 'lg:text-[1.25rem] lg:mb-[2.41375rem] lg:mt-[0.75rem]'} mb-[18px] font-style: italic`} 
+                style={{ 
+                  fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif",
+                  fontSize: spacing.isTabletLarge ? `${spacing.subtitleFontSize}px` : undefined,
+                  marginBottom: spacing.isTabletLarge ? `${2.41375 * spacing.subtitleFontSize / 20}rem` : undefined,
+                  marginTop: spacing.isTabletLarge ? `${0.75 * spacing.subtitleFontSize / 20}rem` : undefined
+                }}
+              >
                 {selectedVideo?.soustitre}
               </p>
-              <p className="text-[12px] font-HelveticaNeue font-[300] lg:text-[1.25rem] " style={{ fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif" }}>
+              <p 
+                className={`text-[12px] font-HelveticaNeue font-[300] ${spacing.isTabletLarge ? '' : 'lg:text-[1.25rem]'} `} 
+                style={{ 
+                  fontFamily: "'HelveticaNeue', 'Helvetica', 'Arial', sans-serif",
+                  fontSize: spacing.isTabletLarge ? `${spacing.descriptionFontSize}px` : undefined
+                }}
+              >
                 {selectedVideo?.description}
               </p>
             </div>

@@ -23,7 +23,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
     const TITLE_FONT_SIZE = 16;
 
     const VISIBLE_ITEMS_DESKTOP = 9;
-    const VISIBLE_ITEMS_TABLET = 7;
+    const VISIBLE_ITEMS_TABLET = 5;
+    const VISIBLE_ITEMS_TABLET_LARGE = 7; // Zone intermédiaire pour 7 images
     const VISIBLE_ITEMS_MOBILE = 3;
 
     const [dimensions, setDimensions] = useState({
@@ -51,9 +52,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo, carouse
 
             const mobile = containerWidth <= 820;
             const tablet = containerWidth > 820 && containerWidth < 1024;
+            const tabletLarge = containerWidth >= 900 && containerWidth < 1024; // Zone avec 7 images
             setIsMobile(mobile);
             setIsTablet(tablet);
-            const visibleItems = mobile ? VISIBLE_ITEMS_MOBILE : (tablet ? VISIBLE_ITEMS_TABLET : VISIBLE_ITEMS_DESKTOP);
+            const visibleItems = mobile ? VISIBLE_ITEMS_MOBILE : (tabletLarge ? VISIBLE_ITEMS_TABLET_LARGE : (tablet ? VISIBLE_ITEMS_TABLET : VISIBLE_ITEMS_DESKTOP));
 
             // Calculer la largeur uniforme pour toutes les images
             let finalCardWidth;
