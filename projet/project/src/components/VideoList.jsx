@@ -970,12 +970,29 @@ export default function VideoList({ onFullscreenChange }) {
               backgroundColor: 'rgba(0, 0, 0, 0.6)',
               transition: 'opacity 0.3s ease-in-out',
               zIndex: 2147483647, // Z-index maximum pour être au-dessus de tout
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              fontFamily: "'Helvetica', 'Arial', sans-serif"
             }}
             onClick={(e) => e.stopPropagation()}
             onMouseEnter={handleNavbarMouseEnter}
             onMouseLeave={handleNavbarMouseLeave}
           >
+            {/* Texte PAUSE/PLAY */}
+            <div
+              onClick={async (e) => {
+                e.stopPropagation();
+                await handleVideoClick();
+              }}
+              style={{
+                fontSize: '12px',
+                color: '#D1D1D1',
+                cursor: 'pointer',
+                fontFamily: "'Helvetica', 'Arial', sans-serif",
+                userSelect: 'none'
+              }}
+            >
+              {isPlaying ? 'PAUSE' : 'PLAY'}
+            </div>
             {/* Barre de progression */}
             <div
               className="relative flex-1 h-1 bg-grey-600 cursor-pointer rounded-full overflow-hidden"
@@ -1016,34 +1033,22 @@ export default function VideoList({ onFullscreenChange }) {
               ></div>
             </div>
 
-            {/* Bouton Son */}
-            <button
+            {/* Texte MUTE/UNMUTE */}
+            <div
               onClick={(e) => {
                 e.stopPropagation();
                 handleToggleMute(e);
               }}
-              className="hover:scale-110 transition-transform bg-transparent border-none cursor-pointer flex items-center justify-center flex-shrink-0"
               style={{
-                pointerEvents: 'auto',
-                padding: '0.25rem'
+                fontSize: '12px',
+                color: '#D1D1D1',
+                cursor: 'pointer',
+                fontFamily: "'Helvetica', 'Arial', sans-serif",
+                userSelect: 'none'
               }}
             >
-              {isMuted ? (
-                <img
-                  src="/images/soundoff.png"
-                  alt="Son coupé"
-                  className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
-                  style={{ display: 'block' }}
-                />
-              ) : (
-                <img
-                  src="/images/soundon.png"
-                  alt="Son activé"
-                  className="w-[15px] h-[20px] md:w-[20px] md:h-[20px]"
-                  style={{ display: 'block' }}
-                />
-              )}
-            </button>
+              {isMuted ? 'UNMUTE' : 'MUTE'}
+            </div>
 
             {/* Bouton Fullscreen */}
             <button
