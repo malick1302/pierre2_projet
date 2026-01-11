@@ -643,7 +643,7 @@ export default function VideoList() {
                       width: isFullscreen ? '100vw' : '100%',
                       maxWidth: isFullscreen ? '100vw' : (spacing.isMobile ? '100%' : `${(spacing.videoHeight * 16) / 9}px`),
                       boxSizing: 'border-box',
-                      position: 'relative', // Position relative pour les boutons absolus à l'intérieur
+                      position: 'relative',
                       backgroundColor: isFullscreen ? '#000' : 'transparent',
                       display: isFullscreen ? 'flex' : 'block',
                       alignItems: isFullscreen ? 'center' : 'flex-start',
@@ -942,42 +942,7 @@ export default function VideoList() {
             </button>
           )}
 
-          {isPlaying && showControls && (
-            <button
-              data-fullscreen-pause
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (playerRef.current) {
-                  setShowControls(true);
-                  setIsHovering(true);
-                  try {
-                    await playerRef.current.pause();
-                    setIsPlaying(false);
-                  } catch (err) {
-                    console.error("Error pausing video:", err);
-                  }
-                }
-              }}
-              style={{
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 2147483647,
-                pointerEvents: 'auto',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <img
-                src="/images/pause.png"
-                alt="Pause"
-                className="w-[60px] h-[60px] md:w-[80px] md:h-[80px]"
-                style={{ display: 'block' }}
-              />
-            </button>
-          )}
+          {/* Pas de bouton pause en plein écran - uniquement play quand pas en lecture */}
 
           {/* Navbar */}
           <div
